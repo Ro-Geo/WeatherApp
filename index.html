@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherApp</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+ 
+    <div class="card">
+        <div class="search">
+            <input type="text" name="" id="" placeholder="enter city name" spellcheck="false">
+            <button><img src="images/search.png" alt="search"></button>
+        </div>
+        <div class="weather">
+            <img src="images/clouds.png" alt="weather" class="weather-icon">
+            <h1 class="temp">25°C</h1>
+            <h2 class="city">Kollam</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png" alt="humidity">
+                    <div>
+                        <p class="humidity">30%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png" alt="wind">
+                    <div>
+                        <p  class="wind">10 km/hr</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+                      
+        </div>
+    </div>
+    <script>
+        const apiKey = "5b3357340f44b7dea2c36b98a5359d39";
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        console.log(searchBox.value);
+        //const geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?&appid="+apiKey+"&q="+city+"&limit=5";
+        const geoApiUrl = `http://api.openweathermap.org/geo/1.0/direct?&appid=${apiKey}`;
+        const weatherApi = `https://api.openweathermap.org/data/2.5/weather?appid=${apiKey}&units=metric`;
+        let lat = "";
+        let lon = "";
+        async function getWeather(city){
+            console.log("getting weather")
+            const geoResponse = await fetch(geoApiUrl+`&q=${city}&limit=5`);
+            const geoData = await geoResponse.json();
+            console.log(geoData)
+            lat = geoData[0].lat;
+            lon = geoData[0].lon;           
+
+            const wthrResponse = await fetch(weatherApi+`&lat=${lat}&lon=${lon}`);
+            const wthrData = await wthrResponse.json();
+            console.log(wthrData)
+
+            document.querySelector(".city").innerHTML = wthrData.name
+            document.querySelector(".temp").innerHTML = Math.round(wthrData.main.temp)
+            document.querySelector(".humidity").innerHTML = wthrData.main.humidity
+            document.querySelector(".wind").innerHTML = wthrData.wind.speed
+        }
+
+        searchBtn.addEventListener("click", ()=>{
+            getWeather(searchBox.value)
+        })
+        getWeather(city)
+    </script>
+</body>
+</html>
